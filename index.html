@@ -52,7 +52,7 @@ button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:10px 14px
 .stateinfo.on{background:var(--soft);border:1px solid var(--accent);color:var(--accent-ink)}
 .sumhead,.sumrow{display:flex;justify-content:space-between;gap:12px;padding:13px 6px;font-size:15px}.sumhead{font-weight:800;border-bottom:1px solid var(--line)}.sumrow{border-bottom:1px solid var(--line);color:var(--muted)}.sumrow:last-of-type{border-bottom:0}.sumrow b{white-space:nowrap;color:var(--ink)}
 .sumtext{margin:14px 2px 0;font-size:15px;line-height:1.8;color:var(--muted)}
-.concl{margin:0;line-height:1.9;font-size:15px;color:var(--muted)}.concl b{color:var(--ink)}
+.concl{margin:0;line-height:1.9;font-size:15px;color:var(--muted)}.concl p{margin:0 0 16px;text-align:justify}.concl p:last-child{margin-bottom:0}.concl b{color:var(--ink)}
 .tablepanel{padding:0;overflow:hidden}.tabletop{padding:20px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.tabletop h2{margin:0;font-size:20px}
 .controls{display:flex;gap:8px;flex-wrap:wrap}.controls input,.controls select{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--field);color:var(--ink);max-width:100%;min-width:140px;font:inherit;font-size:14px}
 .status{padding:11px 20px;background:var(--panel2);border-bottom:1px solid var(--line);color:var(--muted);font-size:12px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
@@ -74,12 +74,12 @@ tbody tr:nth-child(even){background:var(--stripe)}tbody tr:hover{background:var(
 </style></head><body>
 <div class="shell"><div class="topbar"><div class="brand">DATA<span>LAB</span> / Gaji Software Engineer</div><div class="tools"><button class="btn" id="themebtn" onclick="toggleTheme()">☀ Mode terang</button><button class="btn" onclick="printPage()">⎙ Cetak / PDF</button><button class="btn" onclick="downloadCSV()">↓ Ekspor CSV</button></div></div>
 <header class="hero"><div class="eyebrow">• Dashboard Analisis data</div>
-<h1>Analisis Statistik Deskriptif dan Visualisasi Data Gaji Software Engineer.</h1>
+<h1>Analisis Statistik Data Gaji Software Engineer Untuk Mengidentifikasi Pola Distribusi Gaji, Perbedaan Estimasi Gaji, serta Hubungannya dengan Rating Perusahaan.</h1>
 <div class="authors">
   <div class="authors-title">Disusun oleh:</div>
   <div class="authors-list">
-    <div class="author"><div class="author-name">Kharisma</div><div class="author-class">25070 · B-PG</div></div>
-    <div class="author"><div class="author-name">Aglia</div><div class="author-class">25060 · B-PG</div></div>
+    <div class="author"><div class="author-name">Kharisma Amirul Hidayah </div><div class="author-class">250602070 · B-PG . Teknik Informatika</div></div>
+    <div class="author"><div class="author-name">Aglia</div><div class="author-class">250602060 · B-PG . Teknik Informatika</div></div>
   </div>
 </div>
 </header></div>
@@ -210,14 +210,14 @@ function conclusion(){
  const stTop=Object.entries(stateCount).sort((a,b)=>b[1]-a[1])[0],sm=stateMedians();
  const rm=med(salaryRows.filter(remote).map(r=>n(r[C.mid]))),nm=med(salaryRows.filter(r=>val(r,C.loc)&&!remote(r)).map(r=>n(r[C.mid])));
  const items=[];
- items.push(`<b>Distribusi gaji, </b> Titik tengah gaji berkisar ${money(mn)}–${money(mxv)} dengan rata-rata ${money(mean)} dan median ${money(md)}. Kelompok terbanyak ada pada ${p1.label} ribu USD (${pct(p1.n,salaries.length)} lowongan). ${mean>md?'Rata-rata lebih besar dari median, tanda distribusi condong ke kanan: sebagian kecil gaji yang sangat tinggi menaikkan rata-rata, sehingga median lebih mewakili gaji yang umum.':mean<md?'Rata-rata lebih kecil dari median, tanda distribusi condong ke kiri.':'Rata-rata dan median hampir sama, tanda distribusi relatif simetris.'}`);
- if(bs.length>1)items.push(`<b>Perbedaan sumber estimasi.</b> Rata-rata gaji tertinggi ada pada ${esc(bs[0].x)} (${money(bs[0].m)}), sedangkan terendah pada ${esc(bs[bs.length-1].x)} (${money(bs[bs.length-1].m)}), selisih ${money(bs[0].m-bs[bs.length-1].m)}. Perbedaan ini dapat berasal dari cara estimasi maupun jenis lowongan yang dicakup tiap sumber, sehingga tidak bisa langsung disimpulkan salah satu sumber lebih akurat.`);
- if(stTop)items.push(`<b>Wilayah.</b> Lowongan terbanyak ada di ${stTop[0]} (${ST[stTop[0]]||stTop[0]}) dengan ${stTop[1]} lowongan.${sm.length?` Di antara negara bagian dengan minimal 15 data gaji, median tertinggi ada di ${sm[0].x} (${ST[sm[0].x]||sm[0].x}) sebesar ${money(sm[0].m)} dan terendah di ${sm[sm.length-1].x} (${ST[sm[sm.length-1].x]||sm[sm.length-1].x}) sebesar ${money(sm[sm.length-1].m)}.`:''}`);
- if(rm!==null&&nm!==null)items.push(`<b>Remote dan non-remote.</b> Median gaji lowongan Remote ${money(rm)}, sedangkan lowongan non-remote ${money(nm)} (selisih ${money(Math.abs(rm-nm))}${rm>nm?', Remote lebih tinggi':', non-remote lebih tinggi'}).`);
- items.push(`<b>Rating dan gaji.</b> ${corr===null?'Korelasi rating dan gaji tidak dapat dihitung.':`Koefisien korelasi Pearson ${corr.toFixed(2).replace('.',',')} menunjukkan hubungan linear ${(a=>a<.1?'sangat lemah':a<.3?'lemah':a<.5?'sedang':'kuat')(Math.abs(corr))}. ${Math.abs(corr)<.3?'Rating perusahaan hampir tidak bisa dipakai untuk memprediksi besar gaji.':'Rating perusahaan punya kaitan yang cukup terlihat dengan gaji.'}`} Hubungan ini hanya asosiasi, bukan sebab-akibat.`);
- items.push(`<b>Keterbatasan.</b> Hanya ${pct(salaryRows.length,RAW.length)} baris memiliki data gaji, nilai kosong tidak dianggap nol, dan gaji adalah estimasi dalam ribuan USD. Kategori non-remote hanya berdasarkan teks lokasi. Kesimpulan di atas bersifat deskriptif untuk dataset ini dan tidak dapat digeneralisasi ke seluruh pasar kerja.`);
- document.querySelector('#concl').innerHTML=items.join(' ');
+ items.push(`<b>Gambaran gaji.</b> Gaji memiliki rata-rata ${money(mean)} dan median ${money(md)}, dengan rentang ${money(mn)}–${money(mxv)}. Kelompok terbanyak berada pada ${p1.label} ribu USD (${pct(p1.n,salaries.length)} lowongan). ${mean>md?'Rata-rata yang lebih tinggi dari median menunjukkan beberapa gaji tinggi menarik nilai rata-rata ke atas, sehingga median lebih mewakili gaji yang umum.':mean<md?'Rata-rata yang lebih rendah dari median menunjukkan distribusi cenderung condong ke kiri.':'Rata-rata dan median yang hampir sama menunjukkan distribusi relatif simetris.'}`);
+ if(bs.length>1)items.push(`<b>Perbedaan antarwilayah dan sumber.</b> Rata-rata tertinggi berdasarkan sumber estimasi berasal dari ${esc(bs[0].x)} (${money(bs[0].m)}), sedangkan terendah dari ${esc(bs[bs.length-1].x)} (${money(bs[bs.length-1].m)}). ${stTop?`${ST[stTop[0]]||stTop[0]} (${stTop[0]}) memiliki lowongan terbanyak, yaitu ${stTop[1]}.`:''} ${sm.length?`Di antara negara bagian dengan minimal 15 data gaji, median tertinggi berada di ${ST[sm[0].x]||sm[0].x} (${money(sm[0].m)}) dan terendah di ${ST[sm[sm.length-1].x]||sm[sm.length-1].x} (${money(sm[sm.length-1].m)}).`:''} Perbedaan ini menggambarkan variasi dalam dataset dan tidak otomatis menunjukkan sumber estimasi mana yang paling akurat.`);
+ if(rm!==null&&nm!==null)items.push(`<b>Sistem kerja dan rating.</b> Median gaji remote adalah ${money(rm)}, sedangkan non-remote ${money(nm)}. Selisihnya ${money(Math.abs(rm-nm))}, dengan nilai lebih tinggi pada kategori ${rm>nm?'remote':rm<nm?'non-remote':'keduanya sama'}. Sementara itu, korelasi Pearson antara rating perusahaan dan gaji ${corr===null?'tidak dapat dihitung.':`sebesar ${corr.toFixed(2).replace('.',',')}, menunjukkan hubungan linear ${(a=>a<.1?'sangat lemah':a<.3?'lemah':a<.5?'sedang':'kuat')(Math.abs(corr))}.`} Hasil ini menunjukkan asosiasi, bukan sebab-akibat.`);
+ else items.push(`<b>Hubungan rating dan gaji.</b> ${corr===null?'Korelasi rating perusahaan dan gaji tidak dapat dihitung.':`Korelasi Pearson sebesar ${corr.toFixed(2).replace('.',',')} menunjukkan hubungan linear ${(a=>a<.1?'sangat lemah':a<.3?'lemah':a<.5?'sedang':'kuat')(Math.abs(corr))}.`} Hubungan ini menunjukkan asosiasi, bukan sebab-akibat.`);
+ items.push(`<b>Hal yang perlu diperhatikan.</b> Informasi gaji tersedia pada ${pct(salaryRows.length,RAW.length)} baris; nilai kosong tidak dianggap nol. Gaji merupakan estimasi dalam USD, dan kategori non-remote ditentukan dari teks lokasi. Karena itu, hasil ini menggambarkan dataset yang dianalisis dan tidak dapat langsung mewakili seluruh pasar kerja Software Engineer.`);
+ document.querySelector('#concl').innerHTML=items.map(item=>`<p>${item}</p>`).join('');
 }
+ 
 const jobSel=document.querySelector('#job'),sourceSel=document.querySelector('#source');
 [...new Set(RAW.map(r=>val(r,C.job)).filter(Boolean))].sort().forEach(x=>jobSel.insertAdjacentHTML('beforeend',`<option value="${esc(x)}">${esc(x)}</option>`));
 sources.forEach(x=>sourceSel.insertAdjacentHTML('beforeend',`<option value="${esc(x)}">${esc(x)}</option>`));
